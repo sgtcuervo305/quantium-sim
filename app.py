@@ -14,27 +14,29 @@ app = Dash()
 
 
 with open('filtered_results.csv', 'r') as file:
-    reader = pd.read_csv(file)
+    reader = csv.reader(file)
     data = [row for row in reader]
 
 dates = [datetime.fromisoformat(row[1]).date() for row in data[1:]]
-dates.pop(0)
+x = [row[2] for row in data[1:]]  #region
+y = sorted([row[0] for row in data[1:]])  #amount sold
+
    
 # assume you have a "long-form" data frame
 # see https://plotly.com/python/px-arguments/ for more options
 df = pd.DataFrame({
-    "Time": [range(min(dates), max(dates) + 1)],
-    "Amount Sold": [range(500,601)],
-    "Region": ["North", "South", "East", "West"]
+    "Time": dates,
+    "Amount Sold": y,
+    "Region": x
 })
-
-fig = px.line(df, x="Time", y="Amount Sold", color="City", barmode="group")
+print(df)
+fig = px.line(df, x="Time", y="Amount Sold", color='Region')
 
 app.layout = html.Div(children=[
-    html.H1(children='Hello Dash'),
+    html.H1(children='Pink Morsels Sales'),
 
     html.Div(children='''
-        Dash: A web application framework for your data.
+        Graph showing sales of Pink Morsels over time by region.
     '''),
 
     dcc.Graph(
